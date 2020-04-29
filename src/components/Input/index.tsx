@@ -7,8 +7,9 @@ import React, {
   useState,
 } from 'react';
 import { IconBaseProps } from 'react-icons';
+import { FiAlertCircle } from 'react-icons/fi';
 
-import { Container } from './styles';
+import { Container, Error } from './styles';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -39,8 +40,8 @@ const Input: React.FC<InputProps> = ({ name, icon: Incon, ...rest }) => {
   }, [fieldName, registerField]);
 
   return (
-    <Container isFielled={isFielled} isFocused={isFocused}>
-      {Incon && <Incon size={20} />}
+    <Container isErrored={!!error} isFielled={isFielled} isFocused={isFocused}>
+      {Incon && <Incon size={22} />}
       <input
         onFocus={handleInputFocused}
         onBlur={handleInputBlur}
@@ -49,7 +50,11 @@ const Input: React.FC<InputProps> = ({ name, icon: Incon, ...rest }) => {
         {...rest}
       />
 
-      {error && <span>{error}</span>}
+      {error && (
+        <Error title={error}>
+          <FiAlertCircle color="#c53030" size={20} />
+        </Error>
+      )}
     </Container>
   );
 };

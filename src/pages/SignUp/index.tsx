@@ -7,7 +7,7 @@ import logo from '../../assets/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import getValidationsErrors from '../../utils/getValidationsErrors';
-import { signupUserValidate } from '../../validators/userValidate';
+import { signUpUserValidate } from '../../validators/userValidate';
 import { Container, Content, Background } from './styles';
 
 interface UserRequest {
@@ -21,7 +21,8 @@ export const SignUp: React.FC = () => {
 
   const HandleSubmit: SubmitHandler<UserRequest> = useCallback(async data => {
     try {
-      await signupUserValidate.validate(data, { abortEarly: false });
+      formRef.current?.setErrors({});
+      await signUpUserValidate.validate(data, { abortEarly: false });
     } catch (err) {
       const errors = getValidationsErrors(err);
       formRef.current?.setErrors(errors);
