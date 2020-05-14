@@ -2,6 +2,7 @@ import { FormHandles, SubmitHandler } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { useRef, useCallback } from 'react';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
+import { useHistory, Link } from 'react-router-dom';
 
 import logo from '../../assets/logo.svg';
 import Button from '../../components/Button';
@@ -14,12 +15,13 @@ import {
   yuInstance,
   RequestSignDTO,
 } from '../../validators/users/userSignInValidate';
-import { Container, Content, Background } from './styles';
+import { Container, Content, Background, AnimationContainer } from './styles';
 
 export const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { singIn } = useAuth();
   const { addToast } = useToast();
+  const history = useHistory();
 
   const handleSubmit: SubmitHandler<RequestSignDTO> = useCallback(
     async data => {
@@ -28,6 +30,10 @@ export const SignIn: React.FC = () => {
         await signInUserValidate.validate(data, { abortEarly: false });
         const { email, password } = data;
         await singIn({ email, password });
+        addToast({
+          type: 'success',
+          title: 'Usuário logado com sucesso',
+        });
       } catch (err) {
         if (err instanceof yuInstance) {
           const errors = getValidationsErrors(err);
@@ -48,23 +54,25 @@ export const SignIn: React.FC = () => {
   return (
     <Container>
       <Content>
-        <img src={logo} alt="GoBarber" />
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <h1>Faça seu logon</h1>
-          <Input icon={FiMail} name="email" placeholder="E-mail" />
-          <Input
-            icon={FiLock}
-            name="password"
-            type="password"
-            placeholder="Senha"
-          />
-          <Button type="submit"> Entrar</Button>
-          <a href="/">Esqueci minha senha</a>
-        </Form>
-        <a href="/">
-          <FiLogIn />
-          Criar conta
-        </a>
+        <AnimationContainer>
+          <img src={logo} alt="GoBarber" />
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <h1>Faça seu logon</h1>
+            <Input icon={FiMail} name="email" placeholder="E-mail" />
+            <Input
+              icon={FiLock}
+              name="password"
+              type="password"
+              placeholder="Senha"
+            />
+            <Button type="submit"> Entrar</Button>
+            <a href="/">Esqueci minha senha</a>
+          </Form>
+          <Link to="/signup">
+            <FiLogIn />
+            Criar conta
+          </Link>
+        </AnimationContainer>
       </Content>
       <Background />
     </Container>
