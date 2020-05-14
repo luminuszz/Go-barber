@@ -7,27 +7,31 @@ import logo from '../../assets/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import getValidationsErrors from '../../utils/getValidationsErrors';
-import { signUpUserValidate } from '../../validators/userValidate';
+import {
+  signUpUserValidate,
+  RequestSignUpDTO,
+  yuInstance,
+} from '../../validators/users/userSignUpValidate';
 import { Container, Content, Background } from './styles';
-
-interface UserRequest {
-  name: string;
-  email: string;
-  password: string;
-}
 
 export const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
-  const HandleSubmit: SubmitHandler<UserRequest> = useCallback(async data => {
-    try {
-      formRef.current?.setErrors({});
-      await signUpUserValidate.validate(data, { abortEarly: false });
-    } catch (err) {
-      const errors = getValidationsErrors(err);
-      formRef.current?.setErrors(errors);
-    }
-  }, []);
+  const HandleSubmit: SubmitHandler<RequestSignUpDTO> = useCallback(
+    async data => {
+      try {
+        formRef.current?.setErrors({});
+        await signUpUserValidate.validate(data, { abortEarly: false });
+      } catch (err) {
+        if (err instanceof yuInstance) {
+          const errors = getValidationsErrors(err);
+          formRef.current?.setErrors(errors);
+        }
+        // toasts
+      }
+    },
+    [],
+  );
   return (
     <Container>
       <Background />

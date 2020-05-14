@@ -11,4 +11,6 @@ export const signInUserValidate = Yup.object().shape({
   password: Yup.string().required('Senha obrigatório'),
 });
 
+export type RequestSignDTO = Yup.InferType<typeof signInUserValidate>;
+
 export const yuInstance = Yup.ValidationError;
