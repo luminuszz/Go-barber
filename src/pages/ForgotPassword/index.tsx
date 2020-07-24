@@ -1,46 +1,43 @@
 import { FormHandles, SubmitHandler } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { useRef, useCallback, useState } from 'react';
-import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
-import { useHistory, Link } from 'react-router-dom';
+import { FiLogIn, FiMail } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import logo from '../../assets/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Spinner from '../../components/Spinner';
-import { useAuth } from '../../hooks/AuthContext';
 import { useToast } from '../../hooks/ToastContext';
+import api from '../../services/apiClient';
 import getValidationsErrors from '../../utils/getValidationsErrors';
 import {
-  signInUserValidate,
   yuInstance,
-  RequestSignDTO,
-} from '../../validators/users/userSignInValidate';
+  forgotPasswordUserValidate,
+  RequestForgotPasswordDTO,
+} from '../../validators/users/userForgotPassword';
 import { Container, Content, Background, AnimationContainer } from './styles';
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const { singIn } = useAuth();
   const { addToast } = useToast();
-  const history = useHistory();
   const [isload, setIsLoad] = useState(false);
 
-  const handleSubmit: SubmitHandler<RequestSignDTO> = useCallback(
+  const handleSubmit: SubmitHandler<RequestForgotPasswordDTO> = useCallback(
     async data => {
       try {
-        setIsLoad(true);
         formRef.current?.setErrors({});
-        await signInUserValidate.validate(data, { abortEarly: false });
-        const { email, password } = data;
-        await singIn({ email, password });
+
+        await forgotPasswordUserValidate.validate(data, { abortEarly: false });
+
+        await api.post('/password/forgot', data);
 
         addToast({
           type: 'success',
-          title: 'Usuário logado com sucesso',
+          title: 'Recuperação de senha enviada',
+          description: 'Por favor verifique o seu email',
         });
-        setIsLoad(false);
       } catch (err) {
-        setIsLoad(false);
         if (err instanceof yuInstance) {
           const errors = getValidationsErrors(err);
           formRef.current?.setErrors(errors);
@@ -50,11 +47,12 @@ const SignIn: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Erro na autenticação',
-          description: 'Ocorreu um erro ao fazer login, cheque as credências',
+          description: 'Ocorreu um erro ao fazer a recuperação de senha',
         });
       }
     },
-    [singIn, addToast],
+
+    [addToast],
   );
 
   return (
@@ -63,22 +61,16 @@ const SignIn: React.FC = () => {
         <AnimationContainer>
           <img src={logo} alt="GoBarber" />
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <h1>Faça seu logon</h1>
+            <h1>Recuperação de senha</h1>
             <Input icon={FiMail} name="email" placeholder="E-mail" />
-            <Input
-              icon={FiLock}
-              name="password"
-              type="password"
-              placeholder="Senha"
-            />
+
             <Button type="submit">
-              <Spinner visibility={isload} text="Entrar" />
+              <Spinner visibility={isload} text="Recuperar" />
             </Button>
-            <Link to="/forgotpassword">Esqueci minha senha</Link>
           </Form>
-          <Link to="/signup">
+          <Link to="/">
             <FiLogIn />
-            Criar conta
+            Voltar para o login
           </Link>
         </AnimationContainer>
       </Content>

@@ -1,12 +1,13 @@
 import { SubmitHandler, FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
 import { useHistory, Link } from 'react-router-dom';
 
 import logo from '../../assets/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import Spinner from '../../components/Spinner';
 import { useToast } from '../../hooks/ToastContext';
 import api from '../../services/apiClient';
 import getValidationsErrors from '../../utils/getValidationsErrors';
@@ -17,18 +18,22 @@ import {
 } from '../../validators/users/userSignUpValidate';
 import { Container, Content, Background, AnimationContainer } from './styles';
 
-export const SignUp: React.FC = () => {
+const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
   const { addToast } = useToast();
+  const [isload, setIsLoad] = useState(false);
 
   const HandleSubmit: SubmitHandler<RequestSignUpDTO> = useCallback(
     async data => {
       try {
+        setIsLoad(true);
         formRef.current?.setErrors({});
         await signUpUserValidate.validate(data, { abortEarly: false });
 
-        await api.post<RequestSignUpDTO>('users', data);
+        console.log(data);
+
+        await api.post<RequestSignUpDTO>('/users', data);
 
         addToast({
           type: 'success',
@@ -40,12 +45,20 @@ export const SignUp: React.FC = () => {
         if (err instanceof yuInstance) {
           const errors = getValidationsErrors(err);
           formRef.current?.setErrors(errors);
+          addToast({
+            type: 'error',
+            title: 'Erro na requisição',
+            description: 'Verifique suas credências e tente novamente',
+          });
         }
+
         addToast({
           type: 'error',
           title: 'Erro na requisição',
-          description: 'Verifique suas credências e tente novamente',
+          description: 'Erro ao cadastrar',
         });
+      } finally {
+        setIsLoad(false);
       }
     },
     [addToast, history],
@@ -66,7 +79,15 @@ export const SignUp: React.FC = () => {
               type="password"
               placeholder="Senha"
             />
-            <Button type="submit">Cadastrar</Button>
+            <Input
+              icon={FiLock}
+              name="password_confirmation"
+              type="password"
+              placeholder="Confirmar Senha"
+            />
+            <Button type="submit">
+              <Spinner visibility={isload} text="cadastrar" />
+            </Button>
             <a href="/">Esqueci minha senha</a>
           </Form>
           <Link to="/">
@@ -78,3 +99,5 @@ export const SignUp: React.FC = () => {
     </Container>
   );
 };
+
+export default SignUp;

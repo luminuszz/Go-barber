@@ -13,7 +13,7 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
-border-style,input,button{
+body,input,button{
   font-family: 'Roboto Slab', serif;
   font-size:16px;
 

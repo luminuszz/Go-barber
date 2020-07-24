@@ -30,7 +30,7 @@ const Toast: React.FC<ToastsProps> = ({ message, style }) => {
   return (
     <Coitainer
       type={message.type}
-      hasdescription={!!message.description}
+      hasdescription={Number(!!message.description)}
       style={style}
     >
       {icons[message.type || 'info']}
