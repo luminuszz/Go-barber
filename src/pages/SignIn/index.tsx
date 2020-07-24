@@ -22,7 +22,6 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { singIn } = useAuth();
   const { addToast } = useToast();
-  const history = useHistory();
   const [isload, setIsLoad] = useState(false);
 
   const handleSubmit: SubmitHandler<RequestSignDTO> = useCallback(
@@ -72,7 +71,7 @@ const SignIn: React.FC = () => {
               placeholder="Senha"
             />
             <Button type="submit">
-              <Spinner visibility={isload} text="Entrar" />
+              <Spinner visibility={Number(!!isload)} text="Entrar" />
             </Button>
             <Link to="/forgotpassword">Esqueci minha senha</Link>
           </Form>

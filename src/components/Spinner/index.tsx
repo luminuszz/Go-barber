@@ -7,7 +7,7 @@ export interface Props {
   heigth?: number;
   color?: string;
   duration?: number;
-  visibility?: boolean;
+  visibility?: number;
   text?: string;
 }
 
@@ -25,7 +25,7 @@ const Spinner: React.FC<Props> = ({
       duration={duration}
       heigth={heigth}
       width={width}
-      visibility={visibility}
+      visibility={Number(!!visibility)}
     />
   ) : (
     <span>{text}</span>

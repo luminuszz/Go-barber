@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { SubmitHandler, FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { useCallback, useRef, useState } from 'react';
-import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
+import { FiArrowLeft, FiLock } from 'react-icons/fi';
 import { useHistory, Link } from 'react-router-dom';
 
 import logo from '../../assets/logo.svg';
@@ -9,37 +10,51 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Spinner from '../../components/Spinner';
 import { useToast } from '../../hooks/ToastContext';
+import useQuery from '../../hooks/useQuery';
 import api from '../../services/apiClient';
 import getValidationsErrors from '../../utils/getValidationsErrors';
 import {
-  signUpUserValidate,
-  RequestSignUpDTO,
+  RequestResetPasswordDTO,
+  resetPasswordUserValidate,
   yuInstance,
-} from '../../validators/users/userSignUpValidate';
+} from '../../validators/users/userResetPassword';
 import { Container, Content, Background, AnimationContainer } from './styles';
 
-const SignUp: React.FC = () => {
+type IRequestDTO = RequestResetPasswordDTO & {
+  token: string;
+};
+
+const ResetPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
   const { addToast } = useToast();
   const [isload, setIsLoad] = useState(false);
+  const query = useQuery();
 
-  const HandleSubmit: SubmitHandler<RequestSignUpDTO> = useCallback(
+  const HandleSubmit: SubmitHandler<RequestResetPasswordDTO> = useCallback(
     async data => {
       try {
         setIsLoad(true);
         formRef.current?.setErrors({});
-        await signUpUserValidate.validate(data, { abortEarly: false });
 
-        console.log(data);
+        await resetPasswordUserValidate.validate(data, { abortEarly: false });
 
-        await api.post<RequestSignUpDTO>('/users', data);
+        const token = query.get('token');
+
+        const { password, password_confirmation } = data;
+
+        await api.post<IRequestDTO>('/password/reset', {
+          password,
+          password_confirmation,
+          token,
+        });
 
         addToast({
           type: 'success',
-          title: 'Cadastro realizado com sucesso',
+          title: 'Cadastro de nova senha feita com sucesso',
           description: 'Por favor logue na aplicação',
         });
+
         history.push('/');
       } catch (err) {
         if (err instanceof yuInstance) {
@@ -55,13 +70,13 @@ const SignUp: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Erro na requisição',
-          description: 'Erro ao cadastrar',
+          description: 'Erro ao mudar a senha',
         });
       } finally {
         setIsLoad(false);
       }
     },
-    [addToast, history],
+    [addToast, history, query],
   );
   return (
     <Container>
@@ -70,14 +85,12 @@ const SignUp: React.FC = () => {
         <AnimationContainer>
           <img src={logo} alt="GoBarber" />
           <Form ref={formRef} onSubmit={HandleSubmit}>
-            <h1>Faça seu cadastro</h1>
-            <Input icon={FiUser} name="name" placeholder="Nome" />
-            <Input icon={FiMail} name="email" placeholder="E-mail" />
+            <h1>Resetar Senha</h1>
             <Input
               icon={FiLock}
               name="password"
               type="password"
-              placeholder="Senha"
+              placeholder="Nova senha"
             />
             <Input
               icon={FiLock}
@@ -86,9 +99,8 @@ const SignUp: React.FC = () => {
               placeholder="Confirmar Senha"
             />
             <Button type="submit">
-              <Spinner visibility={Number(!!isload)} text="cadastrar" />
+              <Spinner visibility={Number(!!isload)} text="Resetar" />
             </Button>
-            <a href="/">Esqueci minha senha</a>
           </Form>
           <Link to="/">
             <FiArrowLeft />
@@ -100,4 +112,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default ResetPassword;

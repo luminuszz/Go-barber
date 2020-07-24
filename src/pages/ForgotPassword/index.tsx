@@ -18,7 +18,7 @@ import {
 } from '../../validators/users/userForgotPassword';
 import { Container, Content, Background, AnimationContainer } from './styles';
 
-const SignIn: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const [isload, setIsLoad] = useState(false);
@@ -26,6 +26,7 @@ const SignIn: React.FC = () => {
   const handleSubmit: SubmitHandler<RequestForgotPasswordDTO> = useCallback(
     async data => {
       try {
+        setIsLoad(true);
         formRef.current?.setErrors({});
 
         await forgotPasswordUserValidate.validate(data, { abortEarly: false });
@@ -49,6 +50,8 @@ const SignIn: React.FC = () => {
           title: 'Erro na autenticação',
           description: 'Ocorreu um erro ao fazer a recuperação de senha',
         });
+      } finally {
+        setIsLoad(false);
       }
     },
 
@@ -65,7 +68,7 @@ const SignIn: React.FC = () => {
             <Input icon={FiMail} name="email" placeholder="E-mail" />
 
             <Button type="submit">
-              <Spinner visibility={isload} text="Recuperar" />
+              <Spinner visibility={Number(!!isload)} text="Recuperar" />
             </Button>
           </Form>
           <Link to="/">
@@ -79,4 +82,4 @@ const SignIn: React.FC = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;
