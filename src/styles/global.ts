@@ -13,6 +13,15 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
+:root{
+  --color-primary: #28262E;
+  --color-secondary: #3E3B47;
+  --color-orange: #FF9000;
+  --color-text: #F4EDE8;
+  --max-x: 1120px;
+}
+
+
 body,input,button{
   font-family: 'Roboto Slab', serif;
   font-size:16px;
@@ -26,4 +35,6 @@ h1, h2,h3,h4,h5,h6, strong{
 button {
   cursor: pointer;
 }
+
+
 `;

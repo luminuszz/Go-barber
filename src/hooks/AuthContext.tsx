@@ -2,9 +2,15 @@ import React, { createContext, useCallback, useState, useContext } from 'react';
 
 import api from '../services/apiClient';
 
+interface User {
+  id: string;
+  avatarUrl: string;
+  name: string;
+}
+
 interface AuthState {
   token: string;
-  user: object;
+  user: User;
 }
 
 interface SingInRequestDTO {
@@ -12,7 +18,7 @@ interface SingInRequestDTO {
   password: string;
 }
 interface AuthContextData {
-  user: object;
+  user: User;
   singIn(credentials: SingInRequestDTO): Promise<void>;
   singOut(): void;
 }
