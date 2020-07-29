@@ -53,9 +53,13 @@ export const Profile = styled.div`
     span {
       color: var(--color-text);
     }
-
-    strong {
+    a {
+      text-decoration: none;
       color: var(--color-orange);
+
+      &:hover {
+        opacity: 0.8;
+      }
     }
   }
 `;
@@ -176,7 +180,7 @@ export const Appointment = styled.div`
     display: flex;
     align-items: center;
     color: var(--color-text);
-
+    width: 60px;
     svg {
       color: var(--color-orange);
       margin: 8px;
@@ -258,5 +262,16 @@ export const Calendar = styled.aside`
     background: #ff9000 !important;
     border-radius: 10px;
     color: #232129 !important;
+  }
+`;
+
+export const EmptySchedule = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: left;
+
+  p {
+    font-size: 17px;
+    color: var(--color-quaternary);
   }
 `;
