@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import DayPicker, { DayModifiers } from 'react-day-picker';
 import { FiPower, FiClock } from 'react-icons/fi';
+import 'react-day-picker/lib/style.css';
 
 import radomPerson from '../../assets/image.jpeg';
 import logoImg from '../../assets/logo.svg';
@@ -13,10 +15,19 @@ import {
   Schedule,
   NextAppointmet,
   Calendar,
+  Section,
+  Appointment,
 } from './styles';
 
 const Dashboard: React.FC = () => {
   const { singOut, user } = useAuth();
+  const [selectdDate, setSelectedDate] = useState(new Date());
+
+  const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
+    if (modifiers.available) {
+      setSelectedDate(day);
+    }
+  }, []);
 
   return (
     <Container>
@@ -56,8 +67,75 @@ const Dashboard: React.FC = () => {
               </span>
             </div>
           </NextAppointmet>
+
+          <Section>
+            <strong>Manhã</strong>
+
+            <Appointment>
+              <span>
+                <FiClock />
+                08:00
+              </span>
+
+              <div>
+                <img src={radomPerson} alt="random" />
+                <strong>Deigo Fernandes</strong>
+              </div>
+            </Appointment>
+
+            <Appointment>
+              <span>
+                <FiClock />
+                08:00
+              </span>
+
+              <div>
+                <img src={radomPerson} alt="random" />
+                <strong>Deigo Fernandes</strong>
+              </div>
+            </Appointment>
+          </Section>
+
+          <Section>
+            <strong>Tarde</strong>
+            <Appointment>
+              <span>
+                <FiClock />
+                08:00
+              </span>
+
+              <div>
+                <img src={radomPerson} alt="random" />
+                <strong>Deigo Fernandes</strong>
+              </div>
+            </Appointment>
+          </Section>
         </Schedule>
-        <Calendar />
+        <Calendar>
+          <DayPicker
+            weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+            fromMonth={new Date()}
+            disabledDays={[{ daysOfWeek: [0, 6] }]}
+            modifiers={{
+              available: { daysOfWeek: [1, 2, 3, 4, 5] },
+            }}
+            onDayClick={handleDateChange}
+            months={[
+              'Janeiro',
+              'Feveiro',
+              'Março',
+              'Abril',
+              'Maio',
+              'Junho',
+              'Julho',
+              'Agosto',
+              'Setembro',
+              'Outubro',
+              'Novembro',
+              'Dezembro',
+            ]}
+          />
+        </Calendar>
       </Content>
     </Container>
   );

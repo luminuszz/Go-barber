@@ -18,6 +18,7 @@ body{
   --color-secondary: #3E3B47;
   --color-orange: #FF9000;
   --color-text: #F4EDE8;
+  --color-quaternary: #999591;
   --max-x: 1120px;
 }
 
