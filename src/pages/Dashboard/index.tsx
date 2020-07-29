@@ -120,6 +120,7 @@ const Dashboard: React.FC = () => {
               available: { daysOfWeek: [1, 2, 3, 4, 5] },
             }}
             onDayClick={handleDateChange}
+            selectedDays={selectdDate}
             months={[
               'Janeiro',
               'Feveiro',
